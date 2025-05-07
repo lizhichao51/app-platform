@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import modelengine.fit.http.annotation.RequestParam;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 为app提供查询条件
@@ -46,5 +47,6 @@ public class AppQueryCondition {
     @RequestParam(name = "app_type", required = false)
     private String appType;
 
-    private String createBy;
+    @RequestParam(name = "createBy", required = false)
+    private Set<String> createBy;
 }

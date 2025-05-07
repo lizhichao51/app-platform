@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * aipp的CRUD接口。
@@ -219,8 +220,9 @@ public class AppBuilderAppController extends AbstractController {
         this.fitRuntime.publisherOfEvents().publishEvent(new AppCreatingEvent(this));
         OperationContext context = this.contextOf(request, tenantId);
         if (this.appService.getAppCount(tenantId,
-                this.buildAppQueryCondition(AppQueryCondition.builder().createBy(context.getOperator()).build(),
-                        DEFAULT_TYPE)) >= this.maxAppNum) {
+                this.buildAppQueryCondition(AppQueryCondition.builder()
+                        .createBy(Stream.of(context.getOperator()).collect(Collectors.toSet()))
+                        .build(), DEFAULT_TYPE)) >= this.maxAppNum) {
             return Rsp.err(ERR_CODE, this.localeService.localize(AppBuilderAppController.ERR_LOCALE_CODE));
         }
         return Rsp.ok(this.appService.create(appId, dto, context, false));

@@ -154,6 +154,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * 应用开发接口实现类
@@ -256,6 +257,8 @@ public class AppBuilderAppServiceImpl
 
     private final String contextRoot;
 
+    // private final String internalUser;
+
     private final KnowledgeCenterService knowledgeCenterService;
 
     public AppBuilderAppServiceImpl(AppBuilderAppFactory appFactory, AippFlowService aippFlowService,
@@ -268,7 +271,9 @@ public class AppBuilderAppServiceImpl
             @Value("${export-meta}") Map<String, String> exportMeta, AppTypeService appTypeService,
             PluginToolService pluginToolService, PluginService pluginService,
             FlowDefinitionService flowDefinitionService, AippFlowDefinitionService aippFlowDefinitionService,
-            @Value("${app-engine.contextRoot}") String contextRoot, KnowledgeCenterService knowledgeCenterService) {
+            @Value("${app-engine.contextRoot}") String contextRoot, KnowledgeCenterService knowledgeCenterService
+            // ,@Value("${internal-user}") String internalUser
+    ) {
         this.nameLengthMaximum = nameLengthMaximum;
         this.appFactory = appFactory;
         this.templateFactory = templateFactory;
@@ -292,6 +297,7 @@ public class AppBuilderAppServiceImpl
         this.aippFlowDefinitionService = aippFlowDefinitionService;
         this.contextRoot = contextRoot;
         this.knowledgeCenterService = knowledgeCenterService;
+        // this.internalUser = internalUser;
     }
 
     @Override
@@ -539,7 +545,7 @@ public class AppBuilderAppServiceImpl
         if (cond == null) {
             cond = new AppQueryCondition();
         }
-        cond.setCreateBy(context.getOperator());
+        cond.setCreateBy(Stream.of(context.getOperator(), "user1").collect(Collectors.toSet()));
         List<AppBuilderAppMetadataDto> result = this.appRepository.selectWithLatestApp(cond, context.getTenantId(), offset, limit)
                 .stream()
                 .map(this::buildAppMetaData)

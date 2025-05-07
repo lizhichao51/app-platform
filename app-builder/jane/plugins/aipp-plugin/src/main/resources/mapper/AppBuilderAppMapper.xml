@@ -107,8 +107,11 @@
                     #{excludeName}
                 </foreach>
             </if>
-            <if test="cond.createBy != null">
-                and create_by = #{cond.createBy}
+            <if test="cond.createBy != null and !cond.createBy.isEmpty()">
+                and create_by in
+                <foreach item="creator" collection="cond.createBy" open="(" separator="," close=")">
+                    #{creator}
+                </foreach>
             </if>
             ORDER BY
                 "name", update_at DESC
@@ -177,8 +180,11 @@
         <if test="cond.appCategory != null">
             and app_category = #{cond.appCategory}
         </if>
-        <if test="cond.createBy != null">
-            and create_by = #{cond.createBy}
+        <if test="cond.createBy != null and !cond.createBy.isEmpty()">
+            and create_by in
+            <foreach item="creator" collection="cond.createBy" open="(" separator="," close=")">
+                #{creator}
+            </foreach>
         </if>
         ) as latest_records WHERE <include refid="appTypeCondition"/>;
     </select>
